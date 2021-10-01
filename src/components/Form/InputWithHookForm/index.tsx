@@ -3,19 +3,23 @@ import { TextInputProps } from 'react-native'
 import { Control, Controller } from 'react-hook-form'
 
 import { Input } from '../Input'
+import { FormData } from '../../../screens/Register'
 
 import {
-  Container
+  Container,
+  ErrorText
 } from './styles'
 
 interface InputWithHookFormProps extends TextInputProps {
   control: Control
   name: string
+  errorMessage?: string
 }
 
-export function InputWithHookForm({ name, control, ...rest }: InputWithHookFormProps) {
+export function InputWithHookForm({ name, control, errorMessage, ...rest }: InputWithHookFormProps) {
   return (
     <Container>
+      {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       <Controller
         name={name}
         control={control}
