@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { StatusBar } from 'react-native'
 import Modal from 'react-native-modal'
+import { useForm } from 'react-hook-form'
 
 import { Header } from '../../components/Header'
 import { Input } from '../../components/Form/Input'
@@ -8,6 +9,7 @@ import { Button } from '../../components/Form/Button'
 import { TransactionTypeButton } from '../../components/Form/TransactionTypeButton'
 import { CategorySelect } from '../../components/Form/CategorySelect'
 import { CategoryToSelect } from '../CategoryToSelect'
+import { InputWithHookForm } from '../../components/Form/InputWithHookForm'
 
 import {
   Container,
@@ -18,6 +20,11 @@ import {
   Footer
 } from './styles'
 
+interface FormData {
+  name: string
+  amount: string
+}
+
 export function Register() {
   const [transactionTypeSelected, setTransactionTypeSelected] = useState('')
   const [isCategoryModalOpen, setIsModalCategoryOpen] = useState(false)
@@ -26,6 +33,8 @@ export function Register() {
     key: 'categorya',
     name: 'Categoria'
   })
+
+  const { control, handleSubmit } = useForm()
 
   function handleTransactionTypeSelect(type: 'input' | 'output') {
     setTransactionTypeSelected(type)
@@ -37,6 +46,17 @@ export function Register() {
 
   function handleCloseModalSelectCategory() {
     setIsModalCategoryOpen(!isCategoryModalOpen)
+  }
+
+  function handleRegister(form: FormData) {
+    const data = {
+      name: form.name,
+      amount: form.amount,
+      transactionType: transactionTypeSelected,
+      category: category.key
+    }
+    console.log(data)
+
   }
 
   return (
@@ -53,8 +73,16 @@ export function Register() {
       </HeaderContainer>
 
       <FormContainer>
-        <Input placeholder='Nome' />
-        <Input placeholder='Preço' />
+        <InputWithHookForm
+          name='name'
+          control={control}
+          placeholder='Nome'
+        />
+        <InputWithHookForm
+          name='amount'
+          control={control}
+          placeholder='Preço'
+        />
 
         <TransactionTypesContainer>
           <TransactionTypeButton
@@ -74,7 +102,7 @@ export function Register() {
         <CategorySelect title={category.name} onPress={handleOpenModalSelectCategory} />
 
         <Footer>
-          <Button title='Cadastrar' />
+          <Button title='Cadastrar' onPress={handleSubmit(handleRegister)} />
 
         </Footer>
       </FormContainer>
