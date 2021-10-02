@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { StatusBar } from 'react-native'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Modal from "react-native-modal"
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useFocusEffect } from '@react-navigation/native'
 
 import { Header } from '../../components/Header'
 import { HighlightCard } from '../../components/HighlightCard'
@@ -19,57 +21,62 @@ import {
 export interface TransactionDataProps {
   id: string
   type: 'input' | 'output'
-  title: string
+  name: string
   amount: string
-  category: {
-    name: string
-    icon: string
-  }
+  category: string
   date: string
 }
 
 export function ListingTransactions() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [data, setData] = useState<TransactionDataProps[]>([])
 
   function handleOpenModal() {
     setIsModalOpen(!isModalOpen)
   }
 
-  const data: TransactionDataProps[] = [
-    {
-      id: '1',
-      type: 'input',
-      title: 'Desenvolvimento de site',
-      amount: 'R$ 12.000,00',
-      category: {
-        name: 'vendas',
-        icon: 'dollar-sign'
-      },
-      date: '14/08/2021'
-    },
-    {
-      id: '2',
-      type: 'output',
-      title: 'Compra no mercado',
-      amount: 'R$ 600,80',
-      category: {
-        name: 'mercado',
-        icon: 'coffee'
-      },
-      date: '14/08/2021'
-    },
-    {
-      id: '3',
-      type: 'output',
-      title: 'Compra no mercado',
-      amount: 'R$ 600,80',
-      category: {
-        name: 'mercado',
-        icon: 'shopping-bag'
-      },
-      date: '14/08/2021'
-    }
-  ]
+  async function loadData() {
+    const dataKey = '@myfinances:transactions'
+
+    const response = await AsyncStorage.getItem(dataKey)
+    const transactions = response ? JSON.parse(response) : []
+
+    const transactionsFormatted: TransactionDataProps[] = transactions.map((item: TransactionDataProps) => {
+      const amount = Number(item.amount).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      })
+
+      const date = Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: '2-digit'
+      }).format(new Date(item.date))
+
+      return {
+        id: item.id,
+        name: item.name,
+        amount: amount,
+        type: item.type,
+        category: item.category,
+        date: date
+      }
+
+    })
+
+    setData(transactionsFormatted)
+  }
+
+
+
+  useEffect(() => {
+    loadData()
+
+  }, [])
+
+  useFocusEffect(useCallback(() => {
+    loadData()
+  }, []))
 
   return (
     <Container>

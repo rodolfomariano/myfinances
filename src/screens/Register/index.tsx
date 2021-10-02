@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from "yup";
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import uuid from 'react-native-uuid'
+import { useNavigation } from '@react-navigation/native'
 
 import { Header } from '../../components/Header'
 import { Button } from '../../components/Form/Button'
@@ -52,7 +54,9 @@ export function Register() {
     name: 'Categoria'
   })
 
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const navigation: any = useNavigation()
+
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   })
 
@@ -73,10 +77,12 @@ export function Register() {
     if (category.key === 'category') return Alert.alert('Atenção', 'Você tem que selecionar uma categoria')
 
     const newTransaction = {
+      id: String(uuid.v4()),
       name: form.name,
       amount: form.amount,
-      transactionType: transactionTypeSelected,
-      category: category.key
+      type: transactionTypeSelected,
+      category: category.key,
+      date: new Date()
     }
 
     try {
@@ -89,6 +95,15 @@ export function Register() {
       ]
 
       await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted))
+
+      setTransactionTypeSelected('')
+      setCategory({
+        key: 'category',
+        name: 'Categoria'
+      })
+      reset()
+
+      navigation.navigate('Transações')
 
     } catch (error) {
       console.log(error)

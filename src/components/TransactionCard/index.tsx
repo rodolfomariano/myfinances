@@ -1,5 +1,6 @@
 import React from 'react'
 import { RectButtonProps } from "react-native-gesture-handler"
+import { categories } from '../../utils/categories'
 
 import {
   Container,
@@ -12,25 +13,23 @@ import {
   Date,
 } from './styles'
 
-interface CategoryProps {
-  name: string
-  icon: string
-}
 
 interface TransactionCardProps extends RectButtonProps {
   data: {
     type: 'input' | 'output'
-    title: string
+    name: string
     amount: string
-    category: CategoryProps
+    category: string
     date: string
   }
 }
 
 export function TransactionCard({ data, ...rest }: TransactionCardProps) {
+  const category = categories.filter(item => item.key === data.category)[0]
+
   return (
     <Container {...rest}>
-      <Title>{data.title}</Title>
+      <Title>{data.name}</Title>
       <Amount
         type={data.type}
       >
@@ -39,8 +38,8 @@ export function TransactionCard({ data, ...rest }: TransactionCardProps) {
 
       <Footer>
         <Category>
-          <Icon name={data.category.icon} />
-          <CategoryName>{data.category.name}</CategoryName>
+          <Icon name={category.icon} />
+          <CategoryName>{category.name}</CategoryName>
         </Category>
 
         <Date>{data.date}</Date>
