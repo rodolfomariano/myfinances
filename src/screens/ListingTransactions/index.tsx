@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import { ActivityIndicator } from 'react-native'
 import { StatusBar } from 'react-native'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Modal from "react-native-modal"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/native'
+import { useTheme } from 'styled-components'
 
 import { Header } from '../../components/Header'
 import { HighlightCard } from '../../components/HighlightCard'
@@ -16,6 +18,7 @@ import {
   TransactionContainer,
   Title,
   TransactionsList,
+  LoadContainer
 } from './styles'
 
 export interface TransactionDataProps {
@@ -38,9 +41,12 @@ interface HighlightDataProps {
 }
 
 export function ListingTransactions() {
+  const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactions, setTransactions] = useState<TransactionDataProps[]>([])
   const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
+
+  const theme = useTheme()
 
   function handleOpenModal() {
     setIsModalOpen(!isModalOpen)
@@ -112,6 +118,7 @@ export function ListingTransactions() {
       }
     })
 
+    setIsLoading(false)
   }
 
 
@@ -132,62 +139,72 @@ export function ListingTransactions() {
         backgroundColor="transparent"
         translucent
       />
-      <HeaderContainer>
-        <Header />
-      </HeaderContainer>
 
-      <HighlightCardContainer
-        snapToAlignment='start'
-        scrollEventThrottle={16}
-        snapToOffsets={[...Array(3)].
-          map((value, index) => index * (RFValue(300)) + (index - 1) * 16)}
-      >
-        <HighlightCard
-          title='Entrada'
-          amount={highlightData?.entries?.total}
-          lastTransaction='A ultima entrada foi em 14 de abril'
-          type='up'
-        />
-        <HighlightCard
-          title='Saida'
-          amount={highlightData?.expensive?.total}
-          lastTransaction='A ultima saida foi em 22 de abril'
-          type='down'
-        />
-        <HighlightCard
-          title='Saldo'
-          amount={highlightData?.balance?.total}
-          lastTransaction='A ultima saida foi em 22 de abril'
-          type='total'
-        />
 
-      </HighlightCardContainer>
 
-      <TransactionContainer>
-        <Title>Transações</Title>
+      {isLoading
+        ? <LoadContainer>
+          <ActivityIndicator color={theme.colors.attention} size={32} />
+        </LoadContainer>
+        : <>
+          <HeaderContainer>
+            <Header />
+          </HeaderContainer>
 
-        <TransactionsList
-          data={transactions}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
+          <HighlightCardContainer
+            snapToAlignment='start'
+            scrollEventThrottle={16}
+            snapToOffsets={[...Array(3)].
+              map((value, index) => index * (RFValue(300)) + (index - 1) * 16)}
+          >
+            <HighlightCard
+              title='Entrada'
+              amount={highlightData?.entries?.total}
+              lastTransaction='A ultima entrada foi em 14 de abril'
+              type='up'
+            />
+            <HighlightCard
+              title='Saida'
+              amount={highlightData?.expensive?.total}
+              lastTransaction='A ultima saida foi em 22 de abril'
+              type='down'
+            />
+            <HighlightCard
+              title='Saldo'
+              amount={highlightData?.balance?.total}
+              lastTransaction='A ultima saida foi em 22 de abril'
+              type='total'
+            />
+
+          </HighlightCardContainer>
+
+          <TransactionContainer>
+            <Title>Transações</Title>
+
+            <TransactionsList
+              data={transactions}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <TransactionCard
+                  onPress={handleOpenModal}
+                  data={item}
+                />
+              )}
+            />
+          </TransactionContainer>
+
+          <Modal
+            isVisible={isModalOpen}
+            onBackdropPress={() => setIsModalOpen(!isModalOpen)}
+            animationOutTiming={800}
+          >
             <TransactionCard
               onPress={handleOpenModal}
-              data={item}
+              data={transactions[0]}
             />
-          )}
-        />
-      </TransactionContainer>
-
-      <Modal
-        isVisible={isModalOpen}
-        onBackdropPress={() => setIsModalOpen(!isModalOpen)}
-        animationOutTiming={800}
-      >
-        <TransactionCard
-          onPress={handleOpenModal}
-          data={transactions[0]}
-        />
-      </Modal>
+          </Modal>
+        </>
+      }
 
     </Container>
   )
