@@ -11,7 +11,7 @@ import {
 } from './styles'
 
 interface InputWithHookFormProps extends TextInputProps {
-  control: Control
+  control: Control | any
   name: string
   errorMessage?: string
 }

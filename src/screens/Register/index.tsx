@@ -129,7 +129,7 @@ export function Register() {
           <CategorySelect title={category.name} onPress={handleOpenModalSelectCategory} />
 
           <Footer>
-            <Button title='Cadastrar' onPress={handleSubmit(handleRegister) as any} />
+            <Button title='Cadastrar' onPress={handleSubmit(handleRegister)} />
 
           </Footer>
         </FormContainer>
