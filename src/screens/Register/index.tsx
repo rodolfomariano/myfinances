@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   StatusBar,
   TouchableWithoutFeedback,
@@ -9,9 +9,9 @@ import Modal from 'react-native-modal'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from "yup";
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { Header } from '../../components/Header'
-import { Input } from '../../components/Form/Input'
 import { Button } from '../../components/Form/Button'
 import { TransactionTypeButton } from '../../components/Form/TransactionTypeButton'
 import { CategorySelect } from '../../components/Form/CategorySelect'
@@ -45,6 +45,8 @@ export function Register() {
   const [transactionTypeSelected, setTransactionTypeSelected] = useState('')
   const [isCategoryModalOpen, setIsModalCategoryOpen] = useState(false)
 
+  const dataKey = '@myfinances:transactions'
+
   const [category, setCategory] = useState({
     key: 'category',
     name: 'Categoria'
@@ -66,19 +68,48 @@ export function Register() {
     setIsModalCategoryOpen(!isCategoryModalOpen)
   }
 
-  function handleRegister(form: FormData) {
+  async function handleRegister(form: FormData) {
     if (!transactionTypeSelected) return Alert.alert('Atenção', 'Você tem que selecionar um tipo de transação')
     if (category.key === 'category') return Alert.alert('Atenção', 'Você tem que selecionar uma categoria')
 
-    const data = {
+    const newTransaction = {
       name: form.name,
       amount: form.amount,
       transactionType: transactionTypeSelected,
       category: category.key
     }
-    console.log(data)
+
+    try {
+      const data = await AsyncStorage.getItem(dataKey)
+      const currentData = data ? JSON.parse(data) : []
+
+      const dataFormatted = [
+        ...currentData,
+        newTransaction
+      ]
+
+      await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted))
+
+    } catch (error) {
+      console.log(error)
+      Alert.alert('Não foi possível cadastrar!')
+    }
 
   }
+
+  useEffect(() => {
+    async function loadData() {
+      const data = await AsyncStorage.getItem(dataKey)
+      console.log(JSON.parse(data!))
+    }
+    loadData()
+
+    // async function removeAll() {
+    //   await AsyncStorage.removeItem(dataKey)
+    // }
+    // removeAll()
+
+  }, [])
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
