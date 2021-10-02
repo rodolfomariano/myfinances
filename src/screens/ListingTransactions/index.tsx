@@ -156,7 +156,7 @@ export function ListingTransactions() {
         />
         <HighlightCard
           title='Saldo'
-          amount={highlightData?.balance.total}
+          amount={highlightData?.balance?.total}
           lastTransaction='A ultima saida foi em 22 de abril'
           type='total'
         />
