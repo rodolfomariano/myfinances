@@ -14,9 +14,15 @@ padding: 0 24px 16px;
 `
 
 export const HeaderTitle = styled.Text`
-text-align: center;
-font-family: ${({ theme }) => theme.fonts.medium};
-font-size: ${RFValue(18)}px;
-color: ${({ theme }) => theme.colors.title_bold};
-margin-top: 32px;
+  text-align: center;
+  font-family: ${({ theme }) => theme.fonts.medium};
+  font-size: ${RFValue(18)}px;
+  color: ${({ theme }) => theme.colors.title_bold};
+  margin-top: 32px;
+`
+
+export const HistoryCardContainer = styled.ScrollView`
+  flex: 1;
+
+  padding: 24px;
 `

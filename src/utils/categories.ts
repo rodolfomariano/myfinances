@@ -7,4 +7,5 @@ export const categories = [
     { key: 'studies', name: 'Estudos', icon: 'book', color: '#9C001A' },
     { key: 'investment', name: 'Investimentos', icon: 'trending-up', color: '#37E1F9' },
     { key: 'donation', name: 'Doação', icon: 'thumbs-up', color: '#F222C3' },
+    { key: 'health', name: 'Saude', icon: 'heart', color: '#2FF01E' },
 ];
