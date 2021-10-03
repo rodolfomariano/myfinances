@@ -8,4 +8,7 @@ export const categories = [
     { key: 'investment', name: 'Investimentos', icon: 'trending-up', color: '#37E1F9' },
     { key: 'donation', name: 'Doação', icon: 'thumbs-up', color: '#F222C3' },
     { key: 'health', name: 'Saude', icon: 'heart', color: '#2FF01E' },
+    { key: 'home', name: 'Casa', icon: 'home', color: '#02BBF7' },
+    { key: 'otherIncome', name: 'Outras rendas', icon: 'briefcase', color: '#DEE009' },
+    { key: 'otherExpenses', name: 'Outros gastos', icon: 'corner-left-down', color: '#E02816' },
 ];
