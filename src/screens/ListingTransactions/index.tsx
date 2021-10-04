@@ -70,86 +70,86 @@ export function ListingTransactions() {
 
   async function loadData() {
     const dataKey = '@myfinances:transactions'
-
     const response = await AsyncStorage.getItem(dataKey)
-    const transactions = response ? JSON.parse(response) : []
 
-    let entriesTotal = 0
-    let expensiveTotal = 0
+    if (response) {
 
-    const transactionsFormatted: TransactionDataProps[] = transactions.map((item: TransactionDataProps) => {
+      const transactions = response ? JSON.parse(response) : []
 
-      if (item.type === 'input') {
-        entriesTotal += Number(item.amount)
+      let entriesTotal = 0
+      let expensiveTotal = 0
 
-      } else {
-        expensiveTotal += Number(item.amount)
-      }
+      const transactionsFormatted: TransactionDataProps[] = transactions.map((item: TransactionDataProps) => {
 
-      const amount = Number(item.amount).toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
+        if (item.type === 'input') {
+          entriesTotal += Number(item.amount)
+
+        } else {
+          expensiveTotal += Number(item.amount)
+        }
+
+        const amount = Number(item.amount).toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+
+        const date = Intl.DateTimeFormat('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit'
+        }).format(new Date(item?.date))
+
+        return {
+          id: item.id,
+          name: item.name,
+          amount: amount,
+          type: item.type,
+          category: item.category,
+          date: date
+        }
+
       })
 
-      const date = Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: '2-digit'
-      }).format(new Date(item.date))
 
-      return {
-        id: item.id,
-        name: item.name,
-        amount: amount,
-        type: item.type,
-        category: item.category,
-        date: date
-      }
+      setTransactions(transactionsFormatted)
 
-    })
+      const lastTransactionEntries = getLastTransactionDate(transactions, 'input')
+      const lastTransactionExpensive = getLastTransactionDate(transactions, 'output')
+      const totalInterval = `01 a ${lastTransactionExpensive}`
 
+      const total = entriesTotal - expensiveTotal
 
-    setTransactions(transactionsFormatted)
+      setHighlightData({
+        entries: {
+          total: entriesTotal.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          }),
+          lastTransaction: lastTransactionEntries
+        },
+        expensive: {
+          total: expensiveTotal.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          }),
+          lastTransaction: lastTransactionExpensive
+        },
+        balance: {
+          total: total.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          }),
+          lastTransaction: totalInterval
+        }
+      })
 
-    const lastTransactionEntries = getLastTransactionDate(transactions, 'input')
-    const lastTransactionExpensive = getLastTransactionDate(transactions, 'output')
-    const totalInterval = `01 a ${lastTransactionExpensive}`
+      setIsLoading(false)
 
-    const total = entriesTotal - expensiveTotal
-
-    setHighlightData({
-      entries: {
-        total: entriesTotal.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        }),
-        lastTransaction: lastTransactionEntries
-      },
-      expensive: {
-        total: expensiveTotal.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        }),
-        lastTransaction: lastTransactionExpensive
-      },
-      balance: {
-        total: total.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        }),
-        lastTransaction: totalInterval
-      }
-    })
-
-    setIsLoading(false)
+    } else {
+      setIsLoading(false)
+    }
   }
 
-
-
-  useEffect(() => {
-    loadData()
-
-  }, [])
 
   useFocusEffect(useCallback(() => {
     loadData()
@@ -182,19 +182,19 @@ export function ListingTransactions() {
           >
             <HighlightCard
               title='Entrada'
-              amount={highlightData?.entries?.total}
-              lastTransaction={`Última entrada dia ${highlightData?.entries?.lastTransaction}`}
+              amount={highlightData?.entries ? highlightData?.entries?.total : 'R$ 0,00'}
+              lastTransaction={highlightData?.entries ? `Última entrada dia ${highlightData?.entries?.lastTransaction}` : 'Zero entradas adicionadas'}
               type='up'
             />
             <HighlightCard
               title='Saida'
-              amount={highlightData?.expensive?.total}
-              lastTransaction={`Última saida dia ${highlightData?.expensive?.lastTransaction}`}
+              amount={highlightData?.expensive ? highlightData?.expensive?.total : 'R$ 0,00'}
+              lastTransaction={highlightData?.expensive ? `Última saida dia ${highlightData?.expensive?.lastTransaction}` : 'Zero saidas adicionadas'}
               type='down'
             />
             <HighlightCard
               title='Saldo'
-              amount={highlightData?.balance?.total}
+              amount={highlightData?.balance ? highlightData?.balance?.total : 'R$ 0,00'}
               lastTransaction={highlightData?.balance?.lastTransaction}
               type='total'
             />
