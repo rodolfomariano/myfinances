@@ -20,6 +20,7 @@ import theme from './src/global/styles/theme'
 import { Register } from './src/screens/Register';
 import { ListingTransactions } from './src/screens/ListingTransactions';
 import { AppRoutes } from './src/routes/app.routes';
+import { SignIn } from './src/screens/SignIn';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -37,7 +38,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>
-        <AppRoutes />
+        <SignIn />
       </NavigationContainer>
     </ThemeProvider>
   );
