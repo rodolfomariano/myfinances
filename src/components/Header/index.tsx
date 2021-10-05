@@ -2,6 +2,8 @@ import React from 'react'
 import { AntDesign } from '@expo/vector-icons'
 import { useTheme } from 'styled-components'
 
+import { useAuth } from '../../hooks/auth'
+
 import {
   Container,
   UserInfo,
@@ -13,19 +15,20 @@ import {
 } from './styles'
 
 export function Header() {
+  const { user, signOut } = useAuth()
   const theme = useTheme()
 
   return (
     <Container>
       <UserInfo>
-        <Photo source={{ uri: 'https://avatars.githubusercontent.com/u/62636838?v=4' }} />
+        <Photo source={{ uri: user.photo }} />
         <User>
           <UserGreeting>Olá,</UserGreeting>
-          <UserName>Rodolfo</UserName>
+          <UserName>{user.name}</UserName>
         </User>
       </UserInfo>
 
-      <PowerOffButton>
+      <PowerOffButton onPress={signOut}>
         <AntDesign
           name='poweroff'
           size={20}
