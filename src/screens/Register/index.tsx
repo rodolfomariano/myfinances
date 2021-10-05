@@ -20,6 +20,9 @@ import { CategorySelect } from '../../components/Form/CategorySelect'
 import { CategoryToSelect } from '../CategoryToSelect'
 import { InputWithHookForm } from '../../components/Form/InputWithHookForm'
 
+import { useAuth } from '../../hooks/auth';
+import { useTheme } from 'styled-components/native';
+
 import {
   Container,
   HeaderContainer,
@@ -47,7 +50,10 @@ export function Register() {
   const [transactionTypeSelected, setTransactionTypeSelected] = useState('')
   const [isCategoryModalOpen, setIsModalCategoryOpen] = useState(false)
 
-  const dataKey = '@myfinances:transactions'
+  const { user } = useAuth()
+  const theme = useTheme()
+
+  const dataKey = `@myfinances:transactions_user:${user.id}`
 
   const [category, setCategory] = useState({
     key: 'category',
@@ -148,6 +154,7 @@ export function Register() {
             autoCapitalize='sentences'
             autoCorrect={false}
             errorMessage={errors.name && errors.name?.message}
+            placeholderTextColor={theme.colors.text}
           />
           <InputWithHookForm
             name='amount'
@@ -155,6 +162,7 @@ export function Register() {
             placeholder='Preço'
             keyboardType='numeric'
             errorMessage={errors.amount && errors.amount?.message}
+            placeholderTextColor={theme.colors.text}
           />
 
           <TransactionTypesContainer>

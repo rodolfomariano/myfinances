@@ -11,4 +11,5 @@ export const Container = styled(TextInput)`
   font-size: ${RFValue(14)}px;
   font-family: ${({ theme }) => theme.fonts.light};
   margin-bottom: 8px;
+
 `

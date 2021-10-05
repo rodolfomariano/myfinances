@@ -13,6 +13,8 @@ import { Header } from '../../components/Header'
 import { HistoryCard } from '../../components/HistoryCard'
 import { categories } from '../../utils/categories'
 
+import { useAuth } from '../../hooks/auth'
+
 import {
   Container,
   HeaderContainer,
@@ -50,6 +52,7 @@ export function Historic() {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [totalByCategory, setTotalByCategory] = useState<CategoryData[]>([])
 
+  const { user } = useAuth()
   const theme = useTheme()
 
   function handleDateChange(action: 'prev' | 'next') {
@@ -64,7 +67,7 @@ export function Historic() {
   }
 
   async function loadData() {
-    const dataKey = '@myfinances:transactions'
+    const dataKey = `@myfinances:transactions_user:${user.id}`
     const response = await AsyncStorage.getItem(dataKey)
     const responseFormatted = response ? JSON.parse(response) : []
 

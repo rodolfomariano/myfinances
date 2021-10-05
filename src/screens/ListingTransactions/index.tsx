@@ -11,6 +11,8 @@ import { Header } from '../../components/Header'
 import { HighlightCard } from '../../components/HighlightCard'
 import { TransactionCard } from '../../components/TransactionCard'
 
+import { useAuth } from '../../hooks/auth'
+
 import {
   Container,
   HeaderContainer,
@@ -47,18 +49,24 @@ export function ListingTransactions() {
   const [transactions, setTransactions] = useState<TransactionDataProps[]>([])
   const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
 
+  const { user } = useAuth()
   const theme = useTheme()
+
 
   function handleOpenModal() {
     setIsModalOpen(!isModalOpen)
   }
 
   function getLastTransactionDate(collection: TransactionDataProps[], type: 'input' | 'output') {
+    const collectionFiltered = collection.filter(transaction => transaction.type === type)
+
+    if (collectionFiltered.length === 0) {
+      return '0'
+    }
+
     const lastTransaction =
       Math.max.apply(Math,
-        collection
-          .filter(transaction => transaction.type === type)
-          .map(transaction => new Date(transaction.date).getTime())
+        collectionFiltered.map(transaction => new Date(transaction.date).getTime())
       )
 
     return Intl.DateTimeFormat('pt-BR', {
@@ -69,8 +77,9 @@ export function ListingTransactions() {
   }
 
   async function loadData() {
-    const dataKey = '@myfinances:transactions'
+    const dataKey = `@myfinances:transactions_user:${user.id}`
     const response = await AsyncStorage.getItem(dataKey)
+
 
     if (response) {
 
@@ -115,7 +124,9 @@ export function ListingTransactions() {
 
       const lastTransactionEntries = getLastTransactionDate(transactions, 'input')
       const lastTransactionExpensive = getLastTransactionDate(transactions, 'output')
-      const totalInterval = `01 a ${lastTransactionExpensive}`
+
+      const totalInterval = `Do dia 01 ao ${lastTransactionExpensive ? lastTransactionExpensive : lastTransactionEntries}`
+
 
       const total = entriesTotal - expensiveTotal
 
@@ -153,6 +164,7 @@ export function ListingTransactions() {
 
   useFocusEffect(useCallback(() => {
     loadData()
+
   }, []))
 
   return (
@@ -183,13 +195,21 @@ export function ListingTransactions() {
             <HighlightCard
               title='Entrada'
               amount={highlightData?.entries ? highlightData?.entries?.total : 'R$ 0,00'}
-              lastTransaction={highlightData?.entries ? `Última entrada dia ${highlightData?.entries?.lastTransaction}` : 'Zero entradas adicionadas'}
+              lastTransaction={
+                highlightData?.entries?.lastTransaction !== '0' && highlightData?.entries
+                  ? `Última entrada dia ${highlightData?.entries?.lastTransaction}`
+                  : 'Zero entradas adicionadas'
+              }
               type='up'
             />
             <HighlightCard
               title='Saida'
               amount={highlightData?.expensive ? highlightData?.expensive?.total : 'R$ 0,00'}
-              lastTransaction={highlightData?.expensive ? `Última saida dia ${highlightData?.expensive?.lastTransaction}` : 'Zero saidas adicionadas'}
+              lastTransaction={
+                highlightData?.expensive?.lastTransaction !== '0' && highlightData?.entries
+                  ? `Última saida dia ${highlightData?.expensive?.lastTransaction}`
+                  : 'Zero saidas adicionadas'
+              }
               type='down'
             />
             <HighlightCard
