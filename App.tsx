@@ -5,8 +5,6 @@ import React from 'react';
 import { ThemeProvider } from 'styled-components'
 import AppLoading from 'expo-app-loading'
 
-import { NavigationContainer } from '@react-navigation/native';
-
 import {
   useFonts,
   Poppins_300Light,
@@ -23,6 +21,7 @@ import { Register } from './src/screens/Register';
 import { ListingTransactions } from './src/screens/ListingTransactions';
 import { AppRoutes } from './src/routes/app.routes';
 import { SignIn } from './src/screens/SignIn';
+import { Routes } from './src/routes'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -39,11 +38,11 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <AuthProvider>
-          <SignIn />
-        </AuthProvider>
-      </NavigationContainer>
+
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+
     </ThemeProvider>
   );
 }
