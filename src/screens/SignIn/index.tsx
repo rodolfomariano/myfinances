@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ActivityIndicator, Alert, StatusBar } from 'react-native'
+import { ActivityIndicator, Alert, StatusBar, Platform } from 'react-native'
 import { RFValue } from 'react-native-responsive-fontsize'
 import { useTheme } from 'styled-components'
 
@@ -81,12 +81,14 @@ export function SignIn() {
             iconName='google'
             onPress={handleSignInWithGoogle}
           />
+          {Platform.OS === 'ios' &&
+            <SocialLogInButton
+              title='Entrar com Apple'
+              iconName='apple1'
+              onPress={handleSignInWithApple}
+            />
 
-          <SocialLogInButton
-            title='Entrar com Apple'
-            iconName='apple1'
-            onPress={handleSignInWithApple}
-          />
+          }
         </SignButtonContainer>
 
         {isLoading && <ActivityIndicator
