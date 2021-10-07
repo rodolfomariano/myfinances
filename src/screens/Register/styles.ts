@@ -21,7 +21,7 @@ export const HeaderTitle = styled.Text`
   margin-top: 32px;
 `
 
-export const FormContainer = styled.View`
+export const FormContainer = styled.ScrollView`
   flex: 1;
   padding: 32px 24px;
 `

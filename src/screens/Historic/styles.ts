@@ -1,6 +1,6 @@
 import styled from "styled-components/native"
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize"
-import { BorderlessButton } from "react-native-gesture-handler"
+import { BorderlessButton, RectButton } from "react-native-gesture-handler"
 import { Feather } from '@expo/vector-icons'
 
 export const Container = styled.View`
@@ -61,6 +61,31 @@ export const Month = styled.Text`
   font-size: ${RFValue(18)}px;
   color: ${({ theme }) => theme.colors.text};
 `
+export const SelectTypeOfTransactions = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+
+  /* width: 100%; */
+  margin-top: 16px;
+  margin-left: 24px;
+  margin-right: 24px;
+  /* padding: 8px 24px; */
+  border-bottom-width: 1px;
+  border-bottom-color: ${({ theme }) => theme.colors.text};
+`
+
+export const Option = styled(RectButton)`
+  width: 50%;
+  
+`
+
+export const OptionTitle = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.light};
+  font-size: ${RFValue(16)}px;
+  color: ${({ theme }) => theme.colors.text};
+  text-align: center;
+`
 
 export const HistoricTitle = styled.Text`
   font-family: ${({ theme }) => theme.fonts.light};
@@ -68,6 +93,7 @@ export const HistoricTitle = styled.Text`
   color: ${({ theme }) => theme.colors.title_bold};
   margin-left: 24px;
 `
+
 export const LoadContainer = styled.View`
   flex: 1;
   align-items: center;

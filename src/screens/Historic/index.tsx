@@ -27,7 +27,10 @@ import {
   MonthSelectButton,
   SelectIcon,
   Month,
-  LoadContainer
+  LoadContainer,
+  SelectTypeOfTransactions,
+  Option,
+  OptionTitle
 } from './styles'
 
 export interface TransactionDataProps {
@@ -51,6 +54,7 @@ export function Historic() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [totalByCategory, setTotalByCategory] = useState<CategoryData[]>([])
+  const [selectType, setSelectType] = useState('output')
 
   const { user } = useAuth()
   const theme = useTheme()
@@ -66,18 +70,26 @@ export function Historic() {
     }
   }
 
+  function handleSelectType(type: 'input' | 'output') {
+
+    if (selectType !== type) {
+      setIsLoading(true)
+      setSelectType(type)
+    }
+  }
+
   async function loadData() {
     const dataKey = `@myfinances:transactions_user:${user.id}`
     const response = await AsyncStorage.getItem(dataKey)
     const responseFormatted = response ? JSON.parse(response) : []
 
-    const expensives = responseFormatted.filter((expensive: TransactionDataProps) =>
-      expensive.type === 'output' &&
+    const getTransactions = responseFormatted.filter((expensive: TransactionDataProps) =>
+      expensive.type === selectType &&
       new Date(expensive.date).getMonth() === selectedDate.getMonth() &&
       new Date(expensive.date).getFullYear() === selectedDate.getFullYear()
     )
 
-    const expensiveTotal = expensives.reduce((accumulator: number, expensive: TransactionDataProps) => {
+    const expensiveTotal = getTransactions.reduce((accumulator: number, expensive: TransactionDataProps) => {
       return accumulator + Number(expensive.amount)
     }, 0)
 
@@ -86,7 +98,7 @@ export function Historic() {
     categories.forEach(category => {
       let categorySum = 0
 
-      expensives.forEach((expensive: TransactionDataProps) => {
+      getTransactions.forEach((expensive: TransactionDataProps) => {
         if (expensive.category === category.key) {
           categorySum += Number(expensive.amount)
         }
@@ -118,7 +130,7 @@ export function Historic() {
 
   useFocusEffect(useCallback(() => {
     loadData()
-  }, [selectedDate]))
+  }, [selectedDate, selectType]))
 
   return (
     <Container>
@@ -146,6 +158,37 @@ export function Historic() {
           <SelectIcon name='chevron-right' />
         </MonthSelectButton>
       </MonthSelect>
+
+      <SelectTypeOfTransactions>
+        <Option
+          onPress={() => handleSelectType('input')}
+
+        >
+          <OptionTitle
+            style={{
+              color: selectType === 'input' ? theme.colors.attention : theme.colors.text,
+              borderBottomColor: selectType === 'input' ? theme.colors.attention : theme.colors.text,
+              borderBottomWidth: selectType === 'input' ? 3 : 0
+            }}
+          >
+            Entradas
+          </OptionTitle>
+        </Option>
+        <Option
+          onPress={() => handleSelectType('output')}
+
+        >
+          <OptionTitle
+            style={{
+              color: selectType === 'output' ? theme.colors.attention : theme.colors.text,
+              borderBottomColor: selectType === 'output' ? theme.colors.attention : theme.colors.text,
+              borderBottomWidth: selectType === 'output' ? 3 : 0
+            }}
+          >
+            Saidas
+          </OptionTitle>
+        </Option>
+      </SelectTypeOfTransactions>
 
       {isLoading
         ? <LoadContainer>
@@ -179,7 +222,7 @@ export function Historic() {
           </ChartContainer>
 
 
-          <HistoricTitle>Gastos no mês</HistoricTitle>
+          {/* <HistoricTitle>Gastos no mês</HistoricTitle> */}
           <HistoryCardContainer>
             {
               totalByCategory.map(category => (
