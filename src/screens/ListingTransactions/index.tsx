@@ -6,6 +6,7 @@ import Modal from "react-native-modal"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/native'
 import { useTheme } from 'styled-components'
+import { Feather } from '@expo/vector-icons'
 
 import { Header } from '../../components/Header'
 import { HighlightCard } from '../../components/HighlightCard'
@@ -20,8 +21,11 @@ import {
   TransactionContainer,
   Title,
   TransactionsList,
-  LoadContainer
+  LoadContainer,
+  TransactionsHeader,
+  RefreshButton,
 } from './styles'
+import { EditTransaction } from '../EditTransaction'
 
 export interface TransactionDataProps {
   id: string
@@ -48,13 +52,23 @@ export function ListingTransactions() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactions, setTransactions] = useState<TransactionDataProps[]>([])
   const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
+  const [transactionToModal, setTransactionToModal] = useState<TransactionDataProps>({} as TransactionDataProps)
 
   const { user } = useAuth()
   const theme = useTheme()
 
 
-  function handleOpenModal() {
+  function handleOpenModal(item: TransactionDataProps) {
     setIsModalOpen(!isModalOpen)
+    setTransactionToModal(item)
+  }
+
+  function refreshContainer() {
+    setIsLoading(true)
+    setTimeout(() => {
+      loadData()
+
+    }, 300)
   }
 
   function getLastTransactionDate(collection: TransactionDataProps[], type: 'input' | 'output') {
@@ -100,7 +114,7 @@ export function ListingTransactions() {
         const amount = Number(item.amount).toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        })
+        }).replace('R$', 'R$ ')
 
         const date = Intl.DateTimeFormat('pt-BR', {
           day: '2-digit',
@@ -135,21 +149,21 @@ export function ListingTransactions() {
           total: entriesTotal.toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
-          }),
+          }).replace('R$', 'R$ '),
           lastTransaction: lastTransactionEntries
         },
         expensive: {
           total: expensiveTotal.toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
-          }),
+          }).replace('R$', 'R$ '),
           lastTransaction: lastTransactionExpensive
         },
         balance: {
           total: total.toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
-          }),
+          }).replace('R$', 'R$ '),
           lastTransaction: totalInterval
         }
       })
@@ -222,14 +236,22 @@ export function ListingTransactions() {
           </HighlightCardContainer>
 
           <TransactionContainer>
-            <Title>Transações</Title>
+            <TransactionsHeader>
+              <Title>Transações</Title>
+
+              <RefreshButton
+                onPress={refreshContainer}
+              >
+                <Feather name='refresh-cw' size={20} color={theme.colors.text} />
+              </RefreshButton>
+            </TransactionsHeader>
 
             <TransactionsList
               data={transactions}
               keyExtractor={item => item.id}
               renderItem={({ item }) => (
                 <TransactionCard
-                  onPress={handleOpenModal}
+                  onPress={() => handleOpenModal(item)}
                   data={item}
                 />
               )}
@@ -241,10 +263,15 @@ export function ListingTransactions() {
             onBackdropPress={() => setIsModalOpen(!isModalOpen)}
             animationOutTiming={800}
           >
-            <TransactionCard
+            <EditTransaction
+              transaction={transactionToModal}
+              closeModal={() => setIsModalOpen(!isModalOpen)}
+              setLoadingData={refreshContainer}
+            />
+            {/* <TransactionCard
               onPress={handleOpenModal}
               data={transactions[0]}
-            />
+            /> */}
           </Modal>
         </>
       }

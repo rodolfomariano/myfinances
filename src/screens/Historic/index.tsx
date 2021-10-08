@@ -108,7 +108,7 @@ export function Historic() {
         const totalFormatted = categorySum.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        })
+        }).replace('R$', 'R$ ')
 
         const percent = `${(categorySum / expensiveTotal * 100).toFixed(0)}%`
 

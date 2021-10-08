@@ -4,6 +4,7 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize"
 import { getBottomSpace } from "react-native-iphone-x-helper"
 
 import { TransactionDataProps } from '.'
+import { RectButton } from "react-native-gesture-handler"
 
 export const Container = styled.View`
   flex: 1;
@@ -37,11 +38,24 @@ export const TransactionContainer = styled.View`
   padding: 0 24px;
 `
 
+export const TransactionsHeader = styled.View`
+  width: 100%;
+  margin-bottom: 16px;
+
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`
+
+export const RefreshButton = styled(RectButton)`
+  padding: 8px;
+  border-radius: 8px;
+`
+
 export const Title = styled.Text`
   font-size: ${RFValue(20)}px;
   color: ${({ theme }) => theme.colors.title_regular};
   font-family: ${({ theme }) => theme.fonts.light};
-  margin-bottom: 16px;
 `
 
 export const TransactionsList = styled(FlatList as new () => FlatList<TransactionDataProps>).attrs({
