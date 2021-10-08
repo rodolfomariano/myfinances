@@ -34,7 +34,7 @@ export const HighlightCardContainer = styled.ScrollView.attrs({
 export const TransactionContainer = styled.View`
   flex: 1;
 
-  margin-top: ${RFPercentage(12)}px;
+  margin-top: ${RFPercentage(8)}px;
   padding: 0 24px;
 `
 
@@ -51,9 +51,15 @@ export const RefreshButton = styled(RectButton)`
   padding: 8px;
   border-radius: 8px;
 `
+export const TransactionsFilterContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+`
 
 export const Title = styled.Text`
-  font-size: ${RFValue(20)}px;
+  font-size: ${RFValue(16)}px;
   color: ${({ theme }) => theme.colors.title_regular};
   font-family: ${({ theme }) => theme.fonts.light};
 `

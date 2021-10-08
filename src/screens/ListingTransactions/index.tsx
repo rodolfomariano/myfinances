@@ -24,8 +24,10 @@ import {
   LoadContainer,
   TransactionsHeader,
   RefreshButton,
+  TransactionsFilterContainer
 } from './styles'
 import { EditTransaction } from '../EditTransaction'
+import { ButtonTransactionFilter } from '../../components/ButtonTransactionFilter'
 
 export interface TransactionDataProps {
   id: string
@@ -47,12 +49,17 @@ interface HighlightDataProps {
   balance: HighlightProps
 }
 
+interface FilterTransactions {
+  toActive: 'all' | 'newest' | 'inputs' | 'outputs'
+}
+
 export function ListingTransactions() {
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactions, setTransactions] = useState<TransactionDataProps[]>([])
   const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
   const [transactionToModal, setTransactionToModal] = useState<TransactionDataProps>({} as TransactionDataProps)
+  const [filterTransactions, setFilterTransactions] = useState('all')
 
   const { user } = useAuth()
   const theme = useTheme()
@@ -237,7 +244,7 @@ export function ListingTransactions() {
 
           <TransactionContainer>
             <TransactionsHeader>
-              <Title>Transações</Title>
+              <Title>{transactions.length} - {transactions.length <= 1 ? 'Tranzação' : 'Tranzações'}</Title>
 
               <RefreshButton
                 onPress={refreshContainer}
@@ -245,6 +252,33 @@ export function ListingTransactions() {
                 <Feather name='refresh-cw' size={20} color={theme.colors.text} />
               </RefreshButton>
             </TransactionsHeader>
+
+            <TransactionsFilterContainer>
+              <ButtonTransactionFilter
+                title='Todos'
+                type='all'
+                onPress={() => setFilterTransactions('all')}
+                toActive={filterTransactions}
+              />
+              <ButtonTransactionFilter
+                title='Mais novas'
+                type='newest'
+                onPress={() => setFilterTransactions('newest')}
+                toActive={filterTransactions}
+              />
+              <ButtonTransactionFilter
+                title='Entradas'
+                type='inputs'
+                onPress={() => setFilterTransactions('inputs')}
+                toActive={filterTransactions}
+              />
+              <ButtonTransactionFilter
+                title='Saidas'
+                type='outputs'
+                onPress={() => setFilterTransactions('outputs')}
+                toActive={filterTransactions}
+              />
+            </TransactionsFilterContainer>
 
             <TransactionsList
               data={transactions}
