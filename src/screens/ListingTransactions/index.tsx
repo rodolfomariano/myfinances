@@ -55,6 +55,7 @@ interface FilterTransactions {
 
 export function ListingTransactions() {
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactions, setTransactions] = useState<TransactionDataProps[]>([])
   const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
@@ -68,6 +69,11 @@ export function ListingTransactions() {
   function handleOpenModal(item: TransactionDataProps) {
     setIsModalOpen(!isModalOpen)
     setTransactionToModal(item)
+  }
+
+  function handleFilterTransactions(type: string) {
+    setFilterTransactions(type)
+    filterTransactions !== type && setIsLoadingTransactions(true)
   }
 
   function refreshContainer() {
@@ -140,8 +146,26 @@ export function ListingTransactions() {
 
       })
 
+      switch (filterTransactions) {
+        case 'all':
+          setTransactions(transactionsFormatted)
+          break;
+        case 'newest':
+          const newest = transactionsFormatted.reverse()
+          setTransactions(newest)
+          break;
+        case 'inputs':
+          const inputsTransactions = transactionsFormatted.filter(transaction => transaction.type === 'input')
+          setTransactions(inputsTransactions)
+          break;
+        case 'outputs':
+          const outputsTransactions = transactionsFormatted.filter(transaction => transaction.type === 'output')
+          setTransactions(outputsTransactions)
+          break;
+      }
 
-      setTransactions(transactionsFormatted)
+
+      // setTransactions(transactionsFormatted)
 
       const lastTransactionEntries = getLastTransactionDate(transactions, 'input')
       const lastTransactionExpensive = getLastTransactionDate(transactions, 'output')
@@ -176,11 +200,17 @@ export function ListingTransactions() {
       })
 
       setIsLoading(false)
+      setIsLoadingTransactions(false)
 
     } else {
       setIsLoading(false)
+      // setIsLoadingTransactions(false)
     }
   }
+
+  useEffect(() => {
+    loadData()
+  }, [filterTransactions])
 
 
   useFocusEffect(useCallback(() => {
@@ -254,43 +284,53 @@ export function ListingTransactions() {
             </TransactionsHeader>
 
             <TransactionsFilterContainer>
+
               <ButtonTransactionFilter
                 title='Todos'
                 type='all'
-                onPress={() => setFilterTransactions('all')}
+                onPress={() => handleFilterTransactions('all')}
                 toActive={filterTransactions}
               />
               <ButtonTransactionFilter
                 title='Mais novas'
                 type='newest'
-                onPress={() => setFilterTransactions('newest')}
+                onPress={() => handleFilterTransactions('newest')}
                 toActive={filterTransactions}
               />
               <ButtonTransactionFilter
                 title='Entradas'
                 type='inputs'
-                onPress={() => setFilterTransactions('inputs')}
+                onPress={() => handleFilterTransactions('inputs')}
                 toActive={filterTransactions}
               />
               <ButtonTransactionFilter
                 title='Saidas'
                 type='outputs'
-                onPress={() => setFilterTransactions('outputs')}
+                onPress={() => handleFilterTransactions('outputs')}
                 toActive={filterTransactions}
               />
+
+
             </TransactionsFilterContainer>
 
-            <TransactionsList
-              data={transactions}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => (
-                <TransactionCard
-                  onPress={() => handleOpenModal(item)}
-                  data={item}
-                />
-              )}
-            />
+            {isLoadingTransactions
+              ? <LoadContainer>
+                <ActivityIndicator color={theme.colors.attention} size={32} />
+              </LoadContainer>
+              : <TransactionsList
+                data={transactions}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
+                  <TransactionCard
+                    onPress={() => handleOpenModal(item)}
+                    data={item}
+                  />
+                )}
+              />
+
+            }
           </TransactionContainer>
+
 
           <Modal
             isVisible={isModalOpen}
