@@ -61,33 +61,6 @@ export const Footer = styled.View`
   align-items: center;
   justify-content: space-between;
 `
-export const ButtonEdit = styled(RectButton)`
-  width: 49%;
-  background-color: ${({ theme }) => theme.colors.action_light};
-  border-radius: 8px;
-  padding: 16px 32px;
-
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-`
-
-export const ButtonRemove = styled(RectButton)`
-  width: 49%;
-  background-color: ${({ theme }) => theme.colors.attention_light};
-  border-radius: 8px;
-  padding: 16px 32px;
-
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-`
-
-export const ButtonTitle = styled.Text`
-  margin-left: 8px;
-  color: ${({ theme }) => theme.colors.text};
-  font-size: ${RFValue(14)}px;
-`
 
 export const LoadContainer = styled.View`
   flex: 1;
