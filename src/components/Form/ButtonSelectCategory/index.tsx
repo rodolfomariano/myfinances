@@ -48,7 +48,7 @@ export function ButtonSelectCategory({ category, setCategory }: ButtonSelectCate
           data={categories}
           style={{
             paddingHorizontal: 8,
-            height: 200,
+            height: 160,
             display: (isCategoryOptionsVisible === false ? 'none' : 'flex')
           }}
           keyExtractor={item => item.key}

@@ -1,12 +1,12 @@
 import styled from "styled-components/native"
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize"
+import { RFValue } from "react-native-responsive-fontsize"
 import { AntDesign } from '@expo/vector-icons'
 
 import { RectButton, GestureHandlerRootView } from "react-native-gesture-handler"
 
 export const Container = styled(GestureHandlerRootView)`
   width: 100%;
-  min-height: ${RFValue(600)}px;
+  min-height: ${RFValue(650)}px;
   
   background-color: ${({ theme }) => theme.colors.background};
 

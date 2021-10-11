@@ -32,7 +32,7 @@ export const Content = styled.View`
   top: ${RFValue(60)}px;
   z-index: 200;
   width: 100%;
-  height: 200px;
+  height: 160px;
   
 `
 
