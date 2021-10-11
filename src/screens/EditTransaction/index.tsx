@@ -31,6 +31,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { Button } from '../../components/Form/Button';
 import { EditAndRemoveButton } from '../../components/Form/EditAndRemoveButton';
+import { ButtonSelectCategory } from '../../components/Form/ButtonSelectCategory';
 
 interface EditTransactionProps {
   transaction: TransactionDataProps
@@ -83,7 +84,6 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
     name: transactionType!.name
   })
 
-  console.log(category)
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
@@ -234,6 +234,12 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
           defaultValue={String(defaultAmount)}
         />
 
+        <ButtonSelectCategory
+          category={category}
+          setCategory={setCategory}
+        />
+
+
         <TransactionTypesContainer>
           <TransactionTypeButton
             title='Entrada'
@@ -249,9 +255,9 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
           />
         </TransactionTypesContainer>
 
-        <CategorySelect
+        {/* <CategorySelect
           title={category.name}
-          onPress={handleOpenModalSelectCategory} />
+          onPress={handleOpenModalSelectCategory} /> */}
 
 
         <Footer>

@@ -40,7 +40,7 @@ export const ExitIcon = styled(AntDesign)`
   color: ${({ theme }) => theme.colors.error_light};
 `
 
-export const FormContainer = styled.ScrollView`
+export const FormContainer = styled.View`
   flex: 1;
   padding: 32px 24px;
 `
