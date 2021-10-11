@@ -71,6 +71,10 @@ export function ListingTransactions() {
     setTransactionToModal(item)
   }
 
+  function handleCloseModal() {
+    setIsModalOpen(false)
+  }
+
   function handleFilterTransactions(type: string) {
     setFilterTransactions(type)
     filterTransactions !== type && setIsLoadingTransactions(true)
@@ -164,9 +168,6 @@ export function ListingTransactions() {
           break;
       }
 
-
-      // setTransactions(transactionsFormatted)
-
       const lastTransactionEntries = getLastTransactionDate(transactions, 'input')
       const lastTransactionExpensive = getLastTransactionDate(transactions, 'output')
 
@@ -204,7 +205,7 @@ export function ListingTransactions() {
 
     } else {
       setIsLoading(false)
-      // setIsLoadingTransactions(false)
+      setIsLoadingTransactions(false)
     }
   }
 
@@ -339,13 +340,9 @@ export function ListingTransactions() {
           >
             <EditTransaction
               transaction={transactionToModal}
-              closeModal={() => setIsModalOpen(!isModalOpen)}
+              closeModal={handleCloseModal}
               setLoadingData={refreshContainer}
             />
-            {/* <TransactionCard
-              onPress={handleOpenModal}
-              data={transactions[0]}
-            /> */}
           </Modal>
         </>
       }

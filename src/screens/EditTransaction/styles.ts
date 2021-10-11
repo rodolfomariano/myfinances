@@ -1,14 +1,15 @@
-import { RFValue } from "react-native-responsive-fontsize"
 import styled from "styled-components/native"
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize"
 import { AntDesign } from '@expo/vector-icons'
 
 import { RectButton, GestureHandlerRootView } from "react-native-gesture-handler"
 
 export const Container = styled(GestureHandlerRootView)`
-  /* flex: 1 */
   width: 100%;
-  min-height: ${RFValue(500)}px;
+  min-height: ${RFValue(600)}px;
+  
   background-color: ${({ theme }) => theme.colors.background};
+
 `
 export const HeaderContainer = styled.View`
   position: relative;
@@ -54,16 +55,10 @@ export const TransactionTypesContainer = styled.View`
 `
 
 export const Footer = styled.View`
-  margin-top: 24px;
+  margin-top: ${RFValue(40)}px;
   width: 100%;
 
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-`
-
-export const LoadContainer = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
 `

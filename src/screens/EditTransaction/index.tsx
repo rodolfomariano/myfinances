@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { useTheme } from 'styled-components/native'
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { ActivityIndicator } from 'react-native'
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from "yup";
-import { Feather } from '@expo/vector-icons'
-import Modal from 'react-native-modal'
+import { useTheme } from 'styled-components/native'
+import { useForm } from 'react-hook-form';
 
 import { useAuth } from '../../hooks/auth'
 
-import { CategorySelect } from '../../components/Form/CategorySelect'
 import { InputWithHookForm } from '../../components/Form/InputWithHookForm'
 import { TransactionTypeButton } from '../../components/Form/TransactionTypeButton'
-import { CategoryToSelect } from '../CategoryToSelect'
+import { EditAndRemoveButton } from '../../components/Form/EditAndRemoveButton';
+import { ButtonSelectCategory } from '../../components/Form/ButtonSelectCategory';
 
 import { categories } from '../../utils/categories'
 
@@ -23,15 +22,11 @@ import {
   Title,
   ExitIcon,
   ExitButton,
-  LoadContainer,
   FormContainer,
   TransactionTypesContainer,
   Footer,
 } from './styles'
-import { useForm } from 'react-hook-form';
-import { Button } from '../../components/Form/Button';
-import { EditAndRemoveButton } from '../../components/Form/EditAndRemoveButton';
-import { ButtonSelectCategory } from '../../components/Form/ButtonSelectCategory';
+
 
 interface EditTransactionProps {
   transaction: TransactionDataProps
@@ -55,11 +50,7 @@ export interface FormData {
 
 
 export function EditTransaction({ transaction, closeModal, setLoadingData }: EditTransactionProps) {
-  // const [isLoading, setIsLoading] = useState(false)
   const [transactionTypeSelected, setTransactionTypeSelected] = useState(transaction.type)
-  const [transactionEdited, setTransactionEdited] = useState<TransactionDataProps>({} as TransactionDataProps)
-  // const [dateFormatted, setDateFormatted] = useState('')
-  const [isCategoryModalOpen, setIsModalCategoryOpen] = useState(false)
   const [defaultAmount, setDefaultAmount] = useState(0)
   const [defaultName, setDefaultName] = useState('')
 
@@ -106,8 +97,6 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
 
         })
 
-
-
     } catch (error) {
       console.log(error)
     }
@@ -118,44 +107,59 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
     const response = await AsyncStorage.getItem(dataKey)
     const transactions = response ? JSON.parse(response) : []
 
-    try {
-      const transactionData: TransactionDataProps[] = transactions.map((transactionFound: TransactionDataProps) => {
+    Alert.alert(
+      "Editar transação",
+      "Você tem certeza que deseja editar essa tranzação?",
+      [
+        {
+          text: "Não",
+        },
+        {
+          text: "Sim", onPress: async () => {
+
+            try {
+              const transactionData: TransactionDataProps[] = transactions.map((transactionFound: TransactionDataProps) => {
+
+                if (transactionFound.id === transaction.id) {
+                  const transactionEdited = {
+                    id: transactionFound.id,
+                    type: transactionTypeSelected,
+                    name: form.name,
+                    amount: form.amount,
+                    category: category.key,
+                    date: transactionFound.date
+                  }
+
+                  return transactionEdited
+
+                }
+                return transactionFound
+
+              })
+
+              await AsyncStorage.setItem(dataKey, JSON.stringify(transactionData))
+
+              closeModal()
+
+              setTimeout(() => {
+                setLoadingData()
+              }, 1000)
+
+            } catch (error) {
+              console.log(error)
+            }
 
 
-        if (transactionFound.id === transaction.id) {
-          const transactionEdited = {
-            id: transactionFound.id,
-            type: transactionTypeSelected,
-            name: form.name,
-            amount: form.amount,
-            category: category.key,
-            date: transactionFound.date
           }
 
-          return transactionEdited
-
         }
-        return transactionFound
+      ]
+    )
 
-      })
-
-      await AsyncStorage.setItem(dataKey, JSON.stringify(transactionData))
-
-      closeModal()
-
-      setTimeout(() => {
-        setLoadingData()
-      }, 1000)
-
-
-    } catch (error) {
-      console.log(error)
-    }
   }
 
   async function handleRemoveTransaction() {
 
-    // await AsyncStorage.removeItem(dataKey)
     const response = await AsyncStorage.getItem(dataKey)
     const transactions = response ? JSON.parse(response) : []
 
@@ -178,12 +182,21 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
     setTransactionTypeSelected(type)
   }
 
-  function handleOpenModalSelectCategory() {
-    setIsModalCategoryOpen(!isCategoryModalOpen)
+  function verificationRemoveTransaction() {
+    Alert.alert(
+      "Remover transação",
+      "Você tem certeza que deseja remover essa tranzação?",
+      [
+        {
+          text: "Não",
+        },
+        { text: "Sim", onPress: () => handleRemoveTransaction() }
+      ]
+    )
   }
 
-  function handleCloseModalSelectCategory() {
-    setIsModalCategoryOpen(!isCategoryModalOpen)
+  function handleCloseModal() {
+    closeModal()
   }
 
   useEffect(() => {
@@ -192,17 +205,11 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
   }, [])
 
 
-
   return (
     <Container>
-      {/* {isLoading
-        ? <LoadContainer>
-          <ActivityIndicator color={theme.colors.attention} size={32} />
-        </LoadContainer>
 
-        : <> */}
       <HeaderContainer>
-        <ExitButton onPress={closeModal}>
+        <ExitButton onPress={handleCloseModal}>
           <ExitIcon
             name='close'
 
@@ -234,12 +241,6 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
           defaultValue={String(defaultAmount)}
         />
 
-        <ButtonSelectCategory
-          category={category}
-          setCategory={setCategory}
-        />
-
-
         <TransactionTypesContainer>
           <TransactionTypeButton
             title='Entrada'
@@ -255,10 +256,10 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
           />
         </TransactionTypesContainer>
 
-        {/* <CategorySelect
-          title={category.name}
-          onPress={handleOpenModalSelectCategory} /> */}
-
+        <ButtonSelectCategory
+          category={category}
+          setCategory={setCategory}
+        />
 
         <Footer>
 
@@ -271,26 +272,11 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
           <EditAndRemoveButton
             title='Deletar'
             type='remove'
-            onPress={handleRemoveTransaction}
+            onPress={verificationRemoveTransaction}
           />
 
         </Footer>
       </FormContainer>
-      {/* </>
-      } */}
-
-      <Modal
-        isVisible={isCategoryModalOpen}
-        onBackdropPress={() => setIsModalCategoryOpen(!isCategoryModalOpen)}
-      >
-        <CategoryToSelect
-          category={category}
-          setCategory={setCategory}
-          closeSelectCategory={handleCloseModalSelectCategory}
-
-        />
-
-      </Modal>
 
     </Container>
   )
