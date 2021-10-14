@@ -29,17 +29,6 @@ export const Title = styled.Text`
   font-size: ${RFValue(16)}px;
   margin-top: 8px;
 `
-export const ExitButton = styled(RectButton)`
-  position: absolute;
-  right: 15px;
-  top: 16px;
-  padding: 8px; 
-`
-
-export const ExitIcon = styled(AntDesign)`
-  font-size: 32px;
-  color: ${({ theme }) => theme.colors.error_light};
-`
 
 export const FormContainer = styled.View`
   flex: 1;

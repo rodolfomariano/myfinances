@@ -10,7 +10,7 @@ interface TransactionTypeProps {
 
 export const Container = styled(TouchableOpacity) <TransactionTypeProps>`
   width: 49%;
-  padding: 16px 0;
+  padding: ${RFValue(16)}px 0;
   border-radius: 8px;
 
   border: 1.5px solid ${({ theme, type, isActive }) => type === 'input'

@@ -74,6 +74,14 @@ export const TransactionsList = styled(FlatList as new () => FlatList<Transactio
 
 `
 
+export const NoTransactionsImageContainer = styled.View`
+  width: 100%;
+  flex: 1;
+
+  align-items: center;
+  justify-content: center;
+`
+
 export const LoadContainer = styled.View`
   flex: 1;
   align-items: center;

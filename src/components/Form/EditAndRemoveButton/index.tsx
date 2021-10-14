@@ -13,7 +13,7 @@ interface EditAndRemoveButton extends RectButtonProps {
   title: string
   type: 'edit' | 'remove'
   onPress: () => void
-}
+} 
 
 export function EditAndRemoveButton({ title, type, ...rest }: EditAndRemoveButton) {
   const theme = useTheme()

@@ -3,7 +3,7 @@ import { ActivityIndicator } from 'react-native'
 import { StatusBar } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { VictoryPie } from 'victory-native'
-import { RFValue } from 'react-native-responsive-fontsize'
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { useTheme } from 'styled-components'
 import { useFocusEffect } from '@react-navigation/native'
 import { addMonths, subMonths, format } from 'date-fns'
@@ -12,6 +12,7 @@ import { ptBR } from 'date-fns/locale'
 import { Header } from '../../components/Header'
 import { HistoryCard } from '../../components/HistoryCard'
 import { categories } from '../../utils/categories'
+import NoTransactionsSVG from '../../assets/noTransactions.svg'
 
 import { useAuth } from '../../hooks/auth'
 
@@ -30,7 +31,8 @@ import {
   LoadContainer,
   SelectTypeOfTransactions,
   Option,
-  OptionTitle
+  OptionTitle,
+  NoTransactionsImageContainer
 } from './styles'
 
 export interface TransactionDataProps {
@@ -195,49 +197,54 @@ export function Historic() {
           <ActivityIndicator color={theme.colors.attention} size={32} />
         </LoadContainer>
 
-        : <Content
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: 16
-          }}
-        >
+        : totalByCategory.length === 0
+          ? <NoTransactionsImageContainer>
+            <NoTransactionsSVG width={RFPercentage(60)} height={RFPercentage(20)} />
+          </NoTransactionsImageContainer>
+
+          : <Content
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: 16
+            }}
+          >
 
 
-          <ChartContainer>
-            <VictoryPie
-              data={totalByCategory}
-              x='percent'
-              y='total'
-              colorScale={totalByCategory.map(category => category.color)}
-              style={{
-                labels: {
-                  fontSize: RFValue(14),
-                  fill: theme.colors.title_bold
-                }
-              }}
-              labelRadius={50}
-              width={280}
-              height={280}
-            />
-          </ChartContainer>
+            <ChartContainer>
+              <VictoryPie
+                data={totalByCategory}
+                x='percent'
+                y='total'
+                colorScale={totalByCategory.map(category => category.color)}
+                style={{
+                  labels: {
+                    fontSize: RFValue(14),
+                    fill: theme.colors.title_bold
+                  }
+                }}
+                labelRadius={50}
+                width={260}
+                height={260}
+              />
+            </ChartContainer>
 
 
-          {/* <HistoricTitle>Gastos no mês</HistoricTitle> */}
-          <HistoryCardContainer>
-            {
-              totalByCategory.map(category => (
-                <HistoryCard
-                  key={category.name}
-                  title={category.name}
-                  amount={category.totalFormatted}
-                  color={category.color}
-                />
+            {/* <HistoricTitle>Gastos no mês</HistoricTitle> */}
+            <HistoryCardContainer>
+              {
+                totalByCategory.map(category => (
+                  <HistoryCard
+                    key={category.name}
+                    title={category.name}
+                    amount={category.totalFormatted}
+                    color={category.color}
+                  />
 
-              ))
-            }
-          </HistoryCardContainer>
+                ))
+              }
+            </HistoryCardContainer>
 
-        </Content>
+          </Content>
       }
 
 

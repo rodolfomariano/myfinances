@@ -11,7 +11,7 @@ export const Header = styled(RectButton)`
   align-items: center;
   justify-content: space-between;
 
-  padding: 18px 16px;
+  padding: ${RFValue(18)}px ${RFValue(16)}px;
   background-color: ${({ theme }) => theme.colors.shape};
   border-radius: 8px;
 `

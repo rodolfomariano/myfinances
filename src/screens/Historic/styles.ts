@@ -94,6 +94,14 @@ export const HistoricTitle = styled.Text`
   margin-left: 24px;
 `
 
+export const NoTransactionsImageContainer = styled.View`
+  width: 100%;
+  flex: 1;
+
+  align-items: center;
+  justify-content: center;
+`
+
 export const LoadContainer = styled.View`
   flex: 1;
   align-items: center;

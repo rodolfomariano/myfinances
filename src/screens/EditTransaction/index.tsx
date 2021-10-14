@@ -5,13 +5,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from "yup";
 import { useTheme } from 'styled-components/native'
 import { useForm } from 'react-hook-form';
+import { RFValue } from "react-native-responsive-fontsize"
 
 import { useAuth } from '../../hooks/auth'
+import { AntDesign } from '@expo/vector-icons'
 
 import { InputWithHookForm } from '../../components/Form/InputWithHookForm'
 import { TransactionTypeButton } from '../../components/Form/TransactionTypeButton'
 import { EditAndRemoveButton } from '../../components/Form/EditAndRemoveButton';
 import { ButtonSelectCategory } from '../../components/Form/ButtonSelectCategory';
+
 
 import { categories } from '../../utils/categories'
 
@@ -20,12 +23,11 @@ import {
   HeaderContainer,
   TransactionDate,
   Title,
-  ExitIcon,
-  ExitButton,
   FormContainer,
   TransactionTypesContainer,
   Footer,
 } from './styles'
+import { Button } from '../../components/Form/Button';
 
 
 interface EditTransactionProps {
@@ -209,12 +211,6 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
     <Container>
 
       <HeaderContainer>
-        <ExitButton onPress={handleCloseModal}>
-          <ExitIcon
-            name='close'
-
-          />
-        </ExitButton>
 
         <TransactionDate>{transaction.date}</TransactionDate>
         <Title>{transaction.name}</Title>
@@ -276,6 +272,16 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
           />
 
         </Footer>
+
+        <Button
+          title='Cancelar'
+          onPress={handleCloseModal}
+          style={{
+            backgroundColor: 'transparent',
+            marginTop: RFValue(16)
+          }}
+
+        />
       </FormContainer>
 
     </Container>

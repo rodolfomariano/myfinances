@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { StatusBar } from 'react-native'
-import { RFValue } from 'react-native-responsive-fontsize'
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import Modal from "react-native-modal"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/native'
@@ -11,6 +11,9 @@ import { Feather } from '@expo/vector-icons'
 import { Header } from '../../components/Header'
 import { HighlightCard } from '../../components/HighlightCard'
 import { TransactionCard } from '../../components/TransactionCard'
+import { EditTransaction } from '../EditTransaction'
+import { ButtonTransactionFilter } from '../../components/ButtonTransactionFilter'
+import NoTransactionsSVG from '../../assets/noTransactions.svg'
 
 import { useAuth } from '../../hooks/auth'
 
@@ -24,10 +27,9 @@ import {
   LoadContainer,
   TransactionsHeader,
   RefreshButton,
-  TransactionsFilterContainer
+  TransactionsFilterContainer,
+  NoTransactionsImageContainer
 } from './styles'
-import { EditTransaction } from '../EditTransaction'
-import { ButtonTransactionFilter } from '../../components/ButtonTransactionFilter'
 
 export interface TransactionDataProps {
   id: string
@@ -61,6 +63,7 @@ export function ListingTransactions() {
   const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
   const [transactionToModal, setTransactionToModal] = useState<TransactionDataProps>({} as TransactionDataProps)
   const [filterTransactions, setFilterTransactions] = useState('all')
+  const [lastTransactionDate, setLestTransactionDate] = useState('')
 
   const { user } = useAuth()
   const theme = useTheme()
@@ -72,7 +75,7 @@ export function ListingTransactions() {
   }
 
   function handleCloseModal() {
-    setIsModalOpen(false)
+    setIsModalOpen(!isModalOpen)
   }
 
   function handleFilterTransactions(type: string) {
@@ -115,6 +118,18 @@ export function ListingTransactions() {
     if (response) {
 
       const transactions = response ? JSON.parse(response) : []
+
+      const reverseTransactions = transactions.slice().reverse()
+
+      if (reverseTransactions.length > 0) {
+        setLestTransactionDate(`Do dia 1 a ${Intl.DateTimeFormat('pt-BR', {
+          day: '2-digit',
+          month: 'long',
+        }).format(new Date(reverseTransactions[0].date))}`)
+      } else {
+        setLestTransactionDate('')
+      }
+
 
       let entriesTotal = 0
       let expensiveTotal = 0
@@ -171,7 +186,7 @@ export function ListingTransactions() {
       const lastTransactionEntries = getLastTransactionDate(transactions, 'input')
       const lastTransactionExpensive = getLastTransactionDate(transactions, 'output')
 
-      const totalInterval = `Do dia 01 ao ${lastTransactionExpensive ? lastTransactionExpensive : lastTransactionEntries}`
+      const totalInterval = `Do dia 1 a ${lastTransactionExpensive ? lastTransactionExpensive : lastTransactionEntries}`
 
 
       const total = entriesTotal - expensiveTotal
@@ -216,6 +231,7 @@ export function ListingTransactions() {
 
   useFocusEffect(useCallback(() => {
     loadData()
+    setFilterTransactions('all')
 
   }, []))
 
@@ -250,7 +266,7 @@ export function ListingTransactions() {
               lastTransaction={
                 highlightData?.entries?.lastTransaction !== '0' && highlightData?.entries
                   ? `Última entrada dia ${highlightData?.entries?.lastTransaction}`
-                  : 'Zero entradas adicionadas'
+                  : 'Nenhuma entrada registrada'
               }
               type='up'
             />
@@ -260,22 +276,27 @@ export function ListingTransactions() {
               lastTransaction={
                 highlightData?.expensive?.lastTransaction !== '0' && highlightData?.entries
                   ? `Última saida dia ${highlightData?.expensive?.lastTransaction}`
-                  : 'Zero saidas adicionadas'
+                  : 'Nenhuma saida registrada'
               }
               type='down'
             />
             <HighlightCard
               title='Saldo'
               amount={highlightData?.balance ? highlightData?.balance?.total : 'R$ 0,00'}
-              lastTransaction={highlightData?.balance?.lastTransaction}
+              lastTransaction={lastTransactionDate}
               type='total'
             />
 
           </HighlightCardContainer>
 
+
+
           <TransactionContainer>
+
+
+
             <TransactionsHeader>
-              <Title>{transactions.length} - {transactions.length <= 1 ? 'Tranzação' : 'Tranzações'}</Title>
+              <Title>{`${transactions.length === 0 ? 'Nenhuma' : transactions.length + ' - '}`} {transactions.length <= 1 ? 'Tranzação' : 'Tranzações'}</Title>
 
               <RefreshButton
                 onPress={refreshContainer}
@@ -318,18 +339,29 @@ export function ListingTransactions() {
               ? <LoadContainer>
                 <ActivityIndicator color={theme.colors.attention} size={32} />
               </LoadContainer>
-              : <TransactionsList
-                data={transactions}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                  <TransactionCard
-                    onPress={() => handleOpenModal(item)}
-                    data={item}
-                  />
-                )}
-              />
+              : transactions.length === 0
+                ? <NoTransactionsImageContainer>
+                  <NoTransactionsSVG width={RFPercentage(60)} height={RFPercentage(20)} />
+                </NoTransactionsImageContainer>
+                : <TransactionsList
+                  data={transactions}
+                  keyExtractor={item => item.id}
+                  renderItem={({ item }) => (
+                    <TransactionCard
+                      onPress={() => handleOpenModal(item)}
+                      data={item}
+                    />
+                  )}
+                />
+
+
+
+
 
             }
+
+
+
           </TransactionContainer>
 
 
