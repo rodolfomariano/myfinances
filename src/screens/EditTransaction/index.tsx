@@ -26,8 +26,10 @@ import {
   FormContainer,
   TransactionTypesContainer,
   Footer,
+  Top
 } from './styles'
 import { Button } from '../../components/Form/Button';
+import { ButtonCloseModal } from '../../components/ButtonCloseModal';
 
 
 interface EditTransactionProps {
@@ -211,8 +213,26 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
     <Container>
 
       <HeaderContainer>
+        <Top>
+          <TransactionDate>{transaction.date}</TransactionDate>
 
-        <TransactionDate>{transaction.date}</TransactionDate>
+          {/* <Button
+            title='X'
+            onPress={handleCloseModal}
+            style={{
+              backgroundColor: 'transparent',
+              width: 50,
+              height: 50,
+
+            }}
+
+          /> */}
+          <ButtonCloseModal
+            onPress={handleCloseModal}
+          />
+
+
+        </Top>
         <Title>{transaction.name}</Title>
       </HeaderContainer>
 

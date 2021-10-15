@@ -18,6 +18,12 @@ export const HeaderContainer = styled.View`
  
 `
 
+export const Top = styled.View`
+  flex-direction: row;  
+  align-items: center;
+  justify-content: space-between;
+`
+
 export const TransactionDate = styled.Text`
   font-family: ${({ theme }) => theme.fonts.light};
   color: ${({ theme }) => theme.colors.text};
