@@ -4,6 +4,10 @@
   <img width="90%" src="https://firebasestorage.googleapis.com/v0/b/imagens-3dce0.appspot.com/o/myFinances-capa.png?alt=media&token=c3fa78fc-e3a4-4d51-9285-7d90ff67314f">
 </p>
 
+<video width="320" height="540" controls>
+  <source src="https://firebasestorage.googleapis.com/v0/b/imagens-3dce0.appspot.com/o/20211018_095203.mp4?alt=media&token=67cd3e13-3c1f-48ef-90fa-ec9958e93e68" type="video/mp4">
+</video>
+
 ## :satellite: Technologies
 
 <ul>
