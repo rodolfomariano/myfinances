@@ -4,7 +4,7 @@
   <img width="90%" src="https://firebasestorage.googleapis.com/v0/b/imagens-3dce0.appspot.com/o/myFinances-capa.png?alt=media&token=c3fa78fc-e3a4-4d51-9285-7d90ff67314f">
 </p>
 
-[![Watch the video]()](https://firebasestorage.googleapis.com/v0/b/imagens-3dce0.appspot.com/o/20211018_095203.mp4?alt=media&token=67cd3e13-3c1f-48ef-90fa-ec9958e93e68)
+[![Watch the video](https://firebasestorage.googleapis.com/v0/b/imagens-3dce0.appspot.com/o/Screenshot_20211018-094600_Expo%20Go.jpg?alt=media&token=6964459a-b16e-4a34-a7e1-af3c58af0fb0)](https://firebasestorage.googleapis.com/v0/b/imagens-3dce0.appspot.com/o/20211018_095203.mp4?alt=media&token=67cd3e13-3c1f-48ef-90fa-ec9958e93e68)
 
 ## :satellite: Technologies
 
