@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img width="220" src="https://firebasestorage.googleapis.com/v0/b/imagens-3dce0.appspot.com/o/gif-myfinances.gif?alt=media&token=439d777e-56e6-44ad-9e5d-576a070b4ddc">
+  <img width="220" src="https://firebasestorage.googleapis.com/v0/b/imagens-3dce0.appspot.com/o/speed-gif-myfinances.gif?alt=media&token=f0f9cd10-9cad-4d46-bf42-2bf7e3280432">
 </p>
 
 
