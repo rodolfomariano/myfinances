@@ -64,10 +64,13 @@ export function ListingTransactions() {
   const [transactionToModal, setTransactionToModal] = useState<TransactionDataProps>({} as TransactionDataProps)
   const [filterTransactions, setFilterTransactions] = useState('all')
   const [lastTransactionDate, setLestTransactionDate] = useState('')
+  const [currentMonthData, setCurrentMonthData] = useState<TransactionDataProps[]>([])
 
   const { user } = useAuth()
   const theme = useTheme()
 
+  const actualMonth = new Date().getMonth()
+  const actualYear = new Date().getFullYear()
 
   function handleOpenModal(item: TransactionDataProps) {
     setIsModalOpen(!isModalOpen)
@@ -92,7 +95,9 @@ export function ListingTransactions() {
   }
 
   function getLastTransactionDate(collection: TransactionDataProps[], type: 'input' | 'output') {
-    const collectionFiltered = collection.filter(transaction => transaction.type === type)
+    const collectionFiltered = collection.filter(
+      transaction => transaction.type === type && new Date(transaction.date).getMonth() === actualMonth && new Date(transaction.date).getFullYear()
+    )
 
     if (collectionFiltered.length === 0) {
       return '0'
@@ -114,6 +119,7 @@ export function ListingTransactions() {
     const dataKey = `@myfinances:transactions_user:${user.id}`
     const response = await AsyncStorage.getItem(dataKey)
 
+    let currentMonth: TransactionDataProps[] = []
 
     if (response) {
 
@@ -134,12 +140,13 @@ export function ListingTransactions() {
       let entriesTotal = 0
       let expensiveTotal = 0
 
+
       const transactionsFormatted: TransactionDataProps[] = transactions.map((item: TransactionDataProps) => {
 
-        if (item.type === 'input') {
+        if (item.type === 'input' && new Date(item.date).getMonth() === actualMonth && new Date(item.date).getFullYear() === actualYear) {
           entriesTotal += Number(item.amount)
 
-        } else {
+        } else if (item.type === 'output' && new Date(item.date).getMonth() === actualMonth && new Date(item.date).getFullYear() === actualYear) {
           expensiveTotal += Number(item.amount)
         }
 
@@ -154,6 +161,21 @@ export function ListingTransactions() {
           year: '2-digit'
         }).format(new Date(item?.date))
 
+        const monthToVerify = new Date(item.date).getMonth()
+        const yearToVerify = new Date(item.date).getFullYear()
+
+        if (actualMonth === monthToVerify && actualYear === yearToVerify) {
+          currentMonth.push({
+            id: item.id,
+            name: item.name,
+            amount: amount,
+            type: item.type,
+            category: item.category,
+            date: date
+          })
+
+        }
+
         return {
           id: item.id,
           name: item.name,
@@ -167,18 +189,18 @@ export function ListingTransactions() {
 
       switch (filterTransactions) {
         case 'all':
-          setTransactions(transactionsFormatted)
+          setTransactions(currentMonth)
           break;
         case 'newest':
-          const newest = transactionsFormatted.reverse()
+          const newest = currentMonth.reverse()
           setTransactions(newest)
           break;
         case 'inputs':
-          const inputsTransactions = transactionsFormatted.filter(transaction => transaction.type === 'input')
+          const inputsTransactions = currentMonth.filter(transaction => transaction.type === 'input')
           setTransactions(inputsTransactions)
           break;
         case 'outputs':
-          const outputsTransactions = transactionsFormatted.filter(transaction => transaction.type === 'output')
+          const outputsTransactions = currentMonth.filter(transaction => transaction.type === 'output')
           setTransactions(outputsTransactions)
           break;
       }
@@ -187,7 +209,6 @@ export function ListingTransactions() {
       const lastTransactionExpensive = getLastTransactionDate(transactions, 'output')
 
       const totalInterval = `Do dia 1 a ${lastTransactionExpensive ? lastTransactionExpensive : lastTransactionEntries}`
-
 
       const total = entriesTotal - expensiveTotal
 

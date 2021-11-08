@@ -159,7 +159,7 @@ export function Register() {
           <InputWithHookForm
             name='amount'
             control={control}
-            placeholder='Preço'
+            placeholder='Valor'
             keyboardType='numeric'
             errorMessage={errors.amount && errors.amount?.message}
             placeholderTextColor={theme.colors.text}

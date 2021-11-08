@@ -250,7 +250,7 @@ export function EditTransaction({ transaction, closeModal, setLoadingData }: Edi
         <InputWithHookForm
           name='amount'
           control={control}
-          placeholder='Preço'
+          placeholder='Valor'
           keyboardType='numeric'
           errorMessage={errors.amount && errors.amount?.message}
           placeholderTextColor={theme.colors.text}
