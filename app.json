@@ -14,7 +14,7 @@
       "**/*"
     ],
     "android": {
-      "package": "com.myfinances",
+      "package": "com.myfinances.rms",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
