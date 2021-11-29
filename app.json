@@ -3,7 +3,7 @@
     "name": "myfinances",
     "slug": "myfinances",
     "scheme": "myfinances",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -14,7 +14,7 @@
       "**/*"
     ],
     "android": {
-      "package": "com.myfinances",
+      "package": "com.myfinances_rms",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
